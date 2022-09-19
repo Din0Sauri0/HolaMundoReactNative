@@ -1,57 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, SectionList, FlatList} from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, Modal, View, Dimensions, Button, Alert} from 'react-native';
+import React, { useState } from 'react';
 
 const width = Dimensions.get('window').width //obtiene ancho completo del dispositivo, con height se obtiene el alto
-const data = [
-  {key: '1', name: 'Gustavo'},
-  {key: '2', name: 'Camila'},
-  {key: '3', name: 'Ariel'},
-  {key: '4', name: 'Rodrigo'},
-  {key: '5', name: 'Rayen'},
-  {key: '6', name: 'Gustavo'},
-  {key: '7', name: 'Camila'},
-  {key: '8', name: 'Ariel'},
-  {key: '9', name: 'Rodrigo'},
-  {key: '10', name: 'Rayen'},
-  {key: '11', name: 'Gustavo'},
-  {key: '12', name: 'Camila'},
-  {key: '13', name: 'Ariel'},
-  {key: '14', name: 'Rodrigo'},
-  {key: '15', name: 'Rayen'},
-]
 
-//url: https://jsonplaceholder.typicode.com/users
+const crearDialogo = () => {
+  Alert.alert(
+    'Titulo',
+    'Subtitulo o mensaje que podemos agregar a este dialogo',
+    [
+      {
+        text: 'Cancelar',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: 'Aceptar',
+        onPress: () => console.log('Boton presionado'),
+        style: 'success',
+      }
+    ],
+    { cancelable: false },
+  )
+}
 
 export default function App() {
 
-  const [loading, setLoading] = useState(true); 
-  const [user, setUser] = useState([]);
-
-  useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-    .then(response => response.json())
-    .then(data => {
-      setUser(data)
-      setLoading(false)
-    })
-  }, [])
-
-  if(loading){
-    return(
-      <View style={styles.center}>
-        <Text>Cargando...</Text>
-      </View>
-    )
-  }
+  const [modal, setModal] = useState(false);
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={user}
-        renderItem={({ item }) => <Text style={styles.item}>{item.name}</Text>}
-        keyExtractor={item => String(item.id)}
-      />
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={modal} //esta propiedad viene dentro del hook de modal
+      >
+        <View style={styles.center}>
+          <View style={styles.content}>
+            <Text>Soy un modal</Text>
+            <Button
+              title='Cerrar modal'
+              onPress={() => setModal(!modal)}
+            />
+          </View>
+        </View>
+      </Modal>
+      <Button title='Abrir modal'onPress={() => setModal(!modal)}/>
+      <Button title='Abrir dialogo' onPress={crearDialogo}/>
     </View>
   );
 }
@@ -67,15 +61,15 @@ const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
-  item:{
-    padding: 10,
-    fontSize: 22,
-    height: 50,
-    borderBottomColor: '·ccc',
-    borderBottomWidth: 1,
-
+  content: {
+    backgroundColor: '#ccc',
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    margin: 25,
   }
 });
